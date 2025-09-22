@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Quiz App</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #3498db, #2980b9);
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 600px;
+      height: 400px;
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+      overflow-y: auto;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .start-btn {
+      background-color: #2ecc71;
+      margin-top: 20px;
+    }
+
+    .option-btn {
+      background-color: #3498db;
+      width: 100%;
+      margin: 8px 0;
+    }
+
+    .exit-btn {
+      background-color: crimson;
+      margin-top: 20px;
+    }
+
+    .hide {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="startScreen">
+    <h1>Welcome to the Quiz</h1>
+    <button class="start-btn" onclick="startQuiz()">Start Quiz</button>
+  </div>
+
+  <div class="container hide" id="quizBox">
+    <div>
+      <strong>Time:</strong> <span id="timer">10</span> seconds
+    </div>
+    <h2 id="questionText"></h2>
+    <div id="optionsContainer"></div>
+    <div id="scoreDisplay" class="hide"></div>
+    <button class="exit-btn" onclick="location.reload()">Exit</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the capital of France?",
+        options: ["Berlin", "Paris", "Madrid", "London"],
+        answer: "Paris"
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Venus"],
+        answer: "Mars"
+      },
+      {
+        question: "What is 10 + 5?",
+        options: ["10", "15", "20", "25"],
+        answer: "15"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let time = 10;
+    let timer;
+
+    function startQuiz() {
+      document.getElementById('startScreen').classList.add('hide');
+      document.getElementById('quizBox').classList.remove('hide');
+      loadQuestion();
+      startTimer();
+    }
+
+    function loadQuestion() {
+      const q = questions[current];
+      document.getElementById('questionText').textContent = q.question;
+
+      const optionsDiv = document.getElementById('optionsContainer');
+      optionsDiv.innerHTML = '';
+
+      q.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.textContent = option;
+        btn.className = 'option-btn';
+        btn.onclick = () => checkAnswer(option);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === questions[current].answer) {
+        score++;
+      }
+
+      current++;
+
+      if (current < questions.length) {
+        loadQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function startTimer() {
+      timer = setInterval(() => {
+        time--;
+        document.getElementById('timer').textContent = time;
+
+        if (time <= 0) {
+          clearInterval(timer);
+          endQuiz();
+        }
+      }, 1000);
+    }
+
+    function endQuiz() {
+      clearInterval(timer);
+      document.getElementById('questionText').classList.add('hide');
+      document.getElementById('optionsContainer').classList.add('hide');
+
+      const scoreBox = document.getElementById('scoreDisplay');
+      scoreBox.classList.remove('hide');
+      scoreBox.innerHTML = `Quiz Complete!<br>Your score: <strong>${score} / ${questions.length}</strong>`;
+    }
+  </script>
+
+</body>
+</html>
